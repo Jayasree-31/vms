@@ -4,7 +4,6 @@ require 'capistrano/rails'
 require 'capistrano/bundler'
 require 'capistrano/rbenv'
 require 'capistrano/rails/assets'
-require 'capistrano/sidekiq'
 require 'capistrano/puma'
 install_plugin Capistrano::Puma
 

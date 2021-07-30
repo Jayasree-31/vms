@@ -286,9 +286,9 @@ DEPENDENCIES
   bson_ext
   byebug
   cancancan
-  capistrano (~> 3.10)
+  capistrano
   capistrano-bundler
-  capistrano-rails (~> 1.4)
+  capistrano-rails
   capistrano-rbenv
   capistrano3-puma
   capybara (>= 2.15)
