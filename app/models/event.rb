@@ -33,4 +33,8 @@ class Event
       :image, :image_cache
     ]
   end
+
+  def search_field_set
+    [:name, :description, :location]
+  end
 end

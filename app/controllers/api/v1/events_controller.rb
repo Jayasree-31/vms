@@ -5,7 +5,13 @@ class Api::V1::EventsController < Api::BaseController
   def index
     start_time =  Time.now
     end_time = Time.now + 50.days
-    @events = Event.where(start_time: start_time..end_time)
+    filter_data = {
+      start_time: start_time..end_time
+    }
+    if params[:search_text].present?
+      filter_data["search_data"] = {"$regex" => /#{Regexp.escape(params[:search_text])}/i}
+    end
+    @events = Event.where(filter_data)
   end
 
   def create
