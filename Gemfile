@@ -38,7 +38,6 @@ gem 'rabl'
 gem 'oj'
 
 gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
-gem 'uglifier', '~> 2.7'
 
 
 # Reduces boot times through caching; required in config/boot.rb
