@@ -5,6 +5,9 @@
 
 require("@rails/ujs").start()
 require("turbolinks").start()
+require("jquery")
+require("popper.js")
+require("moment")
 require("channels")
 
 
