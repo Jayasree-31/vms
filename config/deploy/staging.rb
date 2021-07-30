@@ -29,9 +29,9 @@ namespace :puma do
       execute "mkdir #{shared_path}/tmp/pids -p"
     end
   end
-
-  before :start, :make_dirs
 end
+
+before 'deploy:starting', 'puma:make_dirs'
 
 namespace :deploy do
   desc 'Initial Deploy'
