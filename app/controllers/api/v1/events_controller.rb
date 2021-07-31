@@ -1,17 +1,18 @@
 class Api::V1::EventsController < Api::BaseController
+  skip_before_action :doorkeeper_authorize!, only: :index
   before_action :set_event, only: [:show, :update, :edit, :add_member]
 
   # GET /events
   def index
-    start_time =  Time.now
-    end_time = Time.now + 50.days
+    start_time =  params[:start_time].blank? ? Time.now : params[:start_time].to_datetime
+    end_time = params[:end_time].blank? ? (Time.now + 50.days) : params[:start_time].to_datetime
     filter_data = {
       start_time: start_time..end_time
     }
     if params[:search_text].present?
       filter_data["search_data"] = {"$regex" => /#{Regexp.escape(params[:search_text])}/i}
     end
-    @events = Event.where(filter_data)
+    @events = Event.all.where(filter_data)
   end
 
   def create

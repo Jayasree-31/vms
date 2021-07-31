@@ -3,7 +3,6 @@ class Category
   include Mongoid::Timestamps
 
   field :name, type: String
-  field :reward_points, type: Integer
 
   has_many :events
   belongs_to :creator, class_name: 'User', foreign_key: :created_by, optional: true

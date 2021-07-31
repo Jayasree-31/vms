@@ -1,5 +1,5 @@
 collection @events
-attributes :name, :description, :start_time, :end_time, :location, :image_thumb_url
+attributes :name, :description, :start_time, :end_time, :location, :image_thumb_url, :reward_points
 node(:id) { |e| e.id.to_s }
 node(:creator) { |e| e.creator&.name || e.creator&.email }
 node(:total_members_needed) { |e| e.members_needed }
@@ -12,5 +12,5 @@ child(:event_members, object_root: false) do
 end
 
 child :category do
-  attributes :name, :reward_points
+  attributes :name
 end

@@ -12,6 +12,10 @@ Rails.application.routes.draw do
         collection do
           post :sign_up
           post :sign_in
+          get :me
+        end
+        member do
+          get :events
         end
       end
       resources :categories, only: :index
@@ -22,4 +26,6 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  root :to => "pages#dashboard"
 end

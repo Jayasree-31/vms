@@ -2,7 +2,7 @@ class Api::V1::UsersController < Api::BaseController
   action_set = [:sign_in, :sign_up]
   skip_before_action :doorkeeper_authorize!, only: action_set
   before_action :authorize_application, only: action_set
-  before_action :set_user, only: [:edit, :update]
+  before_action :set_user, only: [:edit, :update, :events, :show]
 
 
   # POST /users/sign_in
@@ -37,7 +37,11 @@ class Api::V1::UsersController < Api::BaseController
 
   # GET /users/:id
   def show
+  end
+
+  def me
     @user = current_user
+    render :show
   end
 
   def update
@@ -53,6 +57,26 @@ class Api::V1::UsersController < Api::BaseController
   def index
     user_role = UserRole.where(name: "volunteer").last
     @users = user_role.users
+  end
+
+  # User event details
+  def events
+
+    events = @user.events
+    @event_details = {
+      upcoming_events: [],
+      past_events: []
+    }
+    upcoming_events = events.where(start_time: {"$gte": Time.now})
+    upcoming_events.each do |ue|
+      @event_details[:upcoming_events] << { name: ue.name, description: ue.description, start_time: ue.start_time, end_time: ue.end_time, location: ue.location, image_thumb_url: ue.image_thumb_url, reward_points: ue.reward_points }
+    end
+
+    past_events = events.where(end_time: {"$lt": Time.now})
+    past_events.each do |pe|
+      user_earned_points = @user.user_point_transactions.where(event_id: pe.id).last
+      @event_details[:past_events] << { name: ue.name, description: ue.description, start_time: ue.start_time, end_time: ue.end_time, location: ue.location, image_thumb_url: ue.image_thumb_url, reward_points: ue.reward_points, user_earned_points:  user_earned_points }
+    end
   end
 
   private

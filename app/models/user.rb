@@ -2,6 +2,8 @@ class User
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  include Searchable
+
   mount_uploader :image, ImageUploader
 
   # Include default devise modules. Others available are:
@@ -49,6 +51,14 @@ class User
   field :location, type: String
   field :event_members_count, type: Integer, default: 0
   field :image, type: String
+  field :city, type: String
+  field :region_name, type: String
+  field :ip, type: String
+  field :country_code, type: String
+  field :country_name, type: String
+  field :latitude, type: String
+  field :longitude, type: String
+  field :zip, type: String
 
   # Validations
   validates :email, presence: true
@@ -56,13 +66,25 @@ class User
 
   # Callbacks
   before_validation :set_role
+  after_create :set_location
+
+
+  embeds_one :user_point
+  has_many :event_members
+  has_many :user_point_transactions
+
+  index({ search_data: "text" })
 
   def self.editable_field_set
     [
       :name, :email, :mobile, :dob, :gender,
         :password, :password_confirmation, :location,
-        :image, :image_cache
+        :image, :image_cache, :ip, :city, :region_name, :zip, :country_code, :country_name, :latitude, :longitude
     ]
+  end
+
+  def search_field_set
+    [:name, :location, :city, :region_name, :zip, :country_code, :country_name, :latitude, :longitude, :location]
   end
 
    # Api auth specific methods
@@ -90,12 +112,38 @@ class User
   end
 
   def image_thumb_url
-    ENV["host"] + image.thumb.url rescue nil
+    # hardcode
+    img = "https://team-d.nighthack.in" + ActionController::Base.helpers.asset_path("user.jpg") rescue nil
+  end
+
+  def events
+    event_ids = self.event_members.pluck(:event_id)
+    events = Event.where(id: {"$in": event_ids})
   end
 
   private
     def validate_email_and_mobile
       errors.add(:email, "must be a valid format") if self.email.present? and not !!(self.email.match(/\A[\w.+-]+@\w+\.\w+\z/))
       errors.add(:mobile, "must be a valid format") if self.mobile.present? and not !!(self.mobile.match(/\d{10}$/))
+    end
+
+    def set_location
+      return if self.ip.blank?
+      ENV['IPSTACK_ACCESS_KEY'] = "f8f90fa5ff481742e57d2648b499a65d"
+      begin
+        data = Ipstack::API.standard(self.ip, {fields: 'city,region_name,zip,ip,country_code,country_name,latitude,longitude'})
+        return if data["success"] == false
+        self.city = data["city"]
+        self.region_name =  data["region_name"]
+        self.zip =  data["zip"]
+        self.country_code =  data["country_code"]
+        self.country_name =  data["country_name"]
+        self.latitude =  data["latitude"]
+        self.longitude =  data["longitude"]
+        self.location =  "#{data["city"]}, #{data["region_name"]}, #{data["zip"]}, #{data["country_code"]}, #{data["country_name"]}, #{data["latitude"]}, #{data["longitude"]} }"
+        self.save
+      rescue => e
+        { success: false, error: e.message }
+      end
     end
 end

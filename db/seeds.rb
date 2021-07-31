@@ -14,12 +14,12 @@ if User.count.zero?
 end
 
 if Category.count.zero?
-  a = 10.times.map { |s| s * 100 }
+  
   categories = [
       "Health Service", "Yoga Session", "Emergencies", "Environment", "Animal Welfare", "Social Service"
     ]
   categories.each do |cat|
-    Category.create(name: cat, reward_points: a.sample)
+    Category.create(name: cat)
   end
 end
 
