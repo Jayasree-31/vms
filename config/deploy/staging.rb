@@ -29,6 +29,8 @@ namespace :puma do
       execute "mkdir #{shared_path}/tmp/pids -p"
     end
   end
+
+  before :start, :make_dirs
 end
 
 before 'deploy:starting', 'puma:make_dirs'
@@ -52,5 +54,4 @@ namespace :deploy do
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
   after  :finishing,    :restart
-  after :finishing, 'sidekiq:restart'
 end
