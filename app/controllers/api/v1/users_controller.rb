@@ -67,12 +67,12 @@ class Api::V1::UsersController < Api::BaseController
       upcoming_events: [],
       past_events: []
     }
-    upcoming_events = events.where(start_time: {"$gte": Time.now})
+    upcoming_events = events.where(start_time: {"$gte": Time.current})
     upcoming_events.each do |ue|
       @event_details[:upcoming_events] << { name: ue.name, description: ue.description, start_time: ue.start_time, end_time: ue.end_time, location: ue.location, image_thumb_url: ue.image_thumb_url, reward_points: ue.reward_points }
     end
 
-    past_events = events.where(end_time: {"$lt": Time.now})
+    past_events = events.where(end_time: {"$lt": Time.current})
     past_events.each do |pe|
       user_earned_points = @user.user_point_transactions.where(event_id: pe.id).last
       @event_details[:past_events] << { name: ue.name, description: ue.description, start_time: ue.start_time, end_time: ue.end_time, location: ue.location, image_thumb_url: ue.image_thumb_url, reward_points: ue.reward_points, user_earned_points:  user_earned_points }
