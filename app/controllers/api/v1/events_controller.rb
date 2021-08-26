@@ -4,8 +4,8 @@ class Api::V1::EventsController < Api::BaseController
 
   # GET /events
   def index
-    start_time =  params[:start_time].blank? ? Time.now : params[:start_time].to_datetime
-    end_time = params[:end_time].blank? ? (Time.now + 50.days) : params[:start_time].to_datetime
+    start_time =  params[:start_time].blank? ? Time.current : params[:start_time].to_datetime
+    end_time = params[:end_time].blank? ? (Time.current + 50.days) : params[:start_time].to_datetime
     filter_data = {
       start_time: start_time..end_time
     }
