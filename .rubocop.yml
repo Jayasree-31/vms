@@ -1,3 +1,5 @@
 require:
   - rubocop-performance
   - rubocop-rails
+Style/FrozenStringLiteralComment:
+  Enabled: false
